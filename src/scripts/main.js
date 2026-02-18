@@ -10,28 +10,21 @@ function initTree() {
   const listItems = tree.querySelectorAll('li');
 
   listItems.forEach((list) => {
-    const nestedList = list.querySelector('ul');
+    const nestedList = list.querySelector(':scope > ul');
 
-    if (nestedList) {
-      const children = Array.from(list.childNodes);
-      const textNode = children.find((child) => {
-        return (
-          (child.nodeType === 3 && child.textContent.trim() !== '') ||
-          child.nodeType === 1
-        );
-      });
-
-      if (textNode) {
-        const span = document.createElement('span');
-
-        span.classList.add('tree__title');
-
-        span.textContent = textNode.textContent.trim();
-
-        list.insertBefore(span, nestedList);
-        list.removeChild(textNode);
-      }
+    if (!nestedList) {
+      return;
     }
+
+    const span = document.createElement('span');
+
+    span.classList.add('tree__title');
+
+    while (list.firstChild !== nestedList) {
+      span.appendChild(list.firstChild);
+    }
+
+    list.insertBefore(span, nestedList);
   });
 
   tree.addEventListener('click', (e) => {
